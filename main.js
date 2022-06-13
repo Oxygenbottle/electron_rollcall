@@ -12,7 +12,8 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js')
     }
   })
-  mainWindow.loadFile('./dist/index.html') // 此处跟electron官网路径不同，需要注意
+  mainWindow.loadURL('http://localhost:8080') // 此处跟electron官网路径不同，需要注意
+  // mainWindow.loadFile('./dist/index.html') // 此处跟electron官网路径不同，需要注意
 }
 
 // 打开开发工具

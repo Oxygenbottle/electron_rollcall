@@ -2,7 +2,7 @@
  * @Author: oxygenbottle_ljh 
  * @Date: 2021-11-30 16:35:47 
  * @Last Modified by: oxygenbottle_ljh
- * @Last Modified time: 2021-11-30 18:26:24
+ * @Last Modified time: 2022-05-15 12:29:16
  */
 import Router from "vue-router";
 import Vue from "vue";
@@ -20,7 +20,7 @@ Router.prototype.push = function push(location) {
 }
 
 const router = new Router({
-  mode: "history",
+  // mode: "history",
   routes: [{
       path: "*",
       redirect: "/home"
@@ -46,6 +46,15 @@ const router = new Router({
       }
     }
   ]
+});
+
+router.onError((error) => {
+  const pattern = /Loading chunk (\d)+ faild/g
+  const isChunkLoadFailed = error.message.match(pattern);
+  const targetPath = router.history.pending.fullPath;
+  if (isChunkLoadFailed) {
+    router.replace(targetPath);
+  }
 });
 
 export default router

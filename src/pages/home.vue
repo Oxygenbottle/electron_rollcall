@@ -1,15 +1,15 @@
 <template>
   <div class="hello">
-    <!-- <swiper :slides-per-view="3" :space-between="50" @swiper="onSwiper" @slideChange="onSlideChange">
-      <swiper-slide>Slide 1</swiper-slide>
-      <swiper-slide>Slide 2</swiper-slide>
-      <swiper-slide>Slide 3</swiper-slide>
-    </swiper> -->
-    <div>
-      上传文件 ： <input type="file" name="file" id="fileId" />
-      <button type="submit" name="btn" value="提交" id="btnId" @click="check()">111</button>
-
+    <div class="top_logo">
+      <img v-if="logo_base64" :src="logo_base64" alt="">
+      <input id="imgID" class="logo" type="file" @change="getLogo" autocomplete="off">
     </div>
+    <div>
+      上传文件 ： <input type="file" name="file" id="fileId" @change="getFile" />
+      <button type="submit" name="btn" value="提交" id="btnId" @click="check()">111</button>
+      <el-button>默认按钮1</el-button>
+    </div>
+    {{rollingList}}
   </div>
 </template>
 
@@ -24,36 +24,33 @@ export default {
   },
   data() {
     return {
-      msg: '首页'
+      msg: '首页',
+      rollingList: [],
+      logo_base64: '',
     }
   },
   mounted() {
-    let router = this.$route
-    console.log('router', router)
+    // let router = this.$route
+    this.rollingList = this.$public.getStorage('rollingList')
+    this.logo_base64 = this.$public.getStorage('logo_base64')
   },
   methods: {
-    check() {
-      var objFile = document.getElementById("fileId");
-      if (objFile.value == "") {
-        alert("不能为空空");
-        return false;
+    async getFile(e) {
+      await this.$public.getFile(e, 'new')
+      this.rollingList = this.$public.getStorage('rollingList')
+      console.log('this.rollingList', this.rollingList)
+    },
+    getLogo(e) {
+      let reader = new FileReader();
+      let files = document.getElementById('imgID').files[0]
+      console.log(files)
+      reader.readAsDataURL(files);
+      reader.onload = () => {
+        console.log('file 转换 base64', reader.result)
+        this.logo_base64 = reader.result;
+        this.$public.saveStorage('logo_base64', reader.result)
       }
-
-      console.log(objFile.files[0]); // 文件字节数
-
-      var files = document.getElementById('#fileId').prop('files');//获取到文件列表
-      if (files.length == 0) {
-        alert('请选择文件');
-      } else {
-        var reader = new FileReader();//新建一个FileReader
-        reader.readAsText(files[0], "UTF-8");//读取文件 
-        reader.onload = function (evt) { //读取完文件之后会回来这里
-          var fileString = evt // 读取文件内容
-          console.log(fileString, '--------------', files[0])
-        }
-      }
-
-    }
+    },
   },
 }
 </script>
@@ -83,5 +80,15 @@ li {
 }
 a {
   color: #42b983;
+}
+.top_logo {
+  width: 100vw;
+  height: 200px;
+  background-color: #42b983;
+  overflow: hidden;
+  .logo {
+    width: 100vw;
+    // height: 200px;
+  }
 }
 </style>

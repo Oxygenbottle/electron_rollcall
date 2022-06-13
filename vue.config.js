@@ -2,15 +2,16 @@
  * @Author: oxygenbottle_ljh 
  * @Date: 2021-12-01 16:49:27 
  * @Last Modified by: oxygenbottle_ljh
- * @Last Modified time: 2021-12-01 17:13:19
+ * @Last Modified time: 2022-06-09 09:29:54
  */
 module.exports = {
   productionSourceMap: false,
   publicPath: './',
   outputDir: 'dist',
+  // assetsPublicPath: './',
   assetsDir: 'assets',
   devServer: {
-    port: 8080,
+    port: 8096,
     host: '0.0.0.0',
     https: false,
     open: true
