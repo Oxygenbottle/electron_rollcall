@@ -109,7 +109,7 @@ export default {
       localStorage.setItem(name, JSON.stringify(data))
     } else {
       Message({
-        message: '本地数据暂无',
+        message: '暂无本地数据',
         type: 'warning'
       })
     }
