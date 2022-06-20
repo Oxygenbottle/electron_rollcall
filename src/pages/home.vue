@@ -36,7 +36,10 @@
       <div class="middle">
         <el-button @click="sign">测试逻辑</el-button>
       </div>
-      <div class="right">{{historyList}}</div>
+      <div class="right">
+        <div v-if="historyList.length == 0">暂无历史记录</div>
+        <div v-else v-for="(item,index) in historyList" :key="index">{{item}}</div>
+      </div>
     </div>
   </div>
 </template>
