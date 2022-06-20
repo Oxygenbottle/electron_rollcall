@@ -8,7 +8,17 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "start": "electron ."
+    "start": "electron .",
+    "electron:pack": "electron-builder --dir",
+    "electron:build": "electron-builder"
+  },
+  "build": {
+    "productName": "点名",
+    "appId": "com.o",
+    "copyright": "2022@sentangle",
+    "directories": {
+      "output": "output"
+    }
   },
   "dependencies": {
     "core-js": "^3.4.3",
@@ -20,6 +30,7 @@
     "@vue/cli-plugin-babel": "^4.1.0",
     "@vue/cli-service": "^4.1.0",
     "electron": "^18.0.3",
+    "electron-builder": "^23.0.3",
     "node-sass": "^4.14.1",
     "sass-loader": "^8.0.0",
     "style-loader": "^3.3.1",

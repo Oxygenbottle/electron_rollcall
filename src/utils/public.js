@@ -7,7 +7,7 @@ export default {
   // ——————————————————————————————————————获取文件公共方法——————————————————————————————————————
   // 获取上传文件
   getFile(event, type) {
-    // console.log(event, '触发获取文件')
+    console.log(event, '触发获取文件')
     let _this = this;
     return new Promise((resolve, reject) => {
       let sheetList = '';
@@ -42,7 +42,7 @@ export default {
             resolve('添加成功')
             _this.addList(sheetList)
           } else {
-            resolve('识别有误')
+            reject('识别有误')
             Message({
               message: '上传识别有误',
               type: 'warning'

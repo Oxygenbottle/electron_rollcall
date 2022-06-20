@@ -5,7 +5,7 @@
       <input id="imgID" class="logo" type="file" @change="getLogo" placeholder="text" autocomplete="off">
     </div>
     <div>
-      <el-input type="file" name="file" id="fileId" @change="getFile" />
+      <input type="file" name="file" id="fileId" @change="getFile" />
       <i class="el-icon-circle-plus-outline" @click="addGroup()"></i>
       <el-button v-for="(item,index) in rollingList" :key="index" @click="signGroup(item)" :type="item.sign == true?'info':'primary'"
         :disabled="item.memberList.length==0">
@@ -36,7 +36,7 @@
       <div class="middle">
         <el-button @click="sign">测试逻辑</el-button>
       </div>
-      <!-- <div class="right">右边</div> -->
+      <div class="right">{{historyList}}</div>
     </div>
   </div>
 </template>
@@ -56,7 +56,7 @@ export default {
   mounted() {
     this.logo_base64 = this.$public.getStorage('logo_base64');
     this.rollingList = this.$public.getStorage('rollingList')
-    this.historyList = this.$public.getStorage('historyList');
+    this.historyList = this.$public.getStorage('historyList') || [];
     console.log('mounted：this.rollingList', this.rollingList)
   },
   methods: {
@@ -64,28 +64,28 @@ export default {
     sign() {
       let signGroup = this.rollingList.filter(item => item.sign == false);
       if (signGroup.length == 0) { // 组抽完
-        let demo = this.rollingList.filter(group => {
+        let residue = this.rollingList.filter(group => {
           let memberlength = group.memberList.filter(member => member.sign == false).length
-          console.log('filter memberlength', memberlength)
           return memberlength != 0
         })
-        console.log('demo', demo)
-        if (this.rollingList.filter(group => group.memberList.filter(member => member.sign == false).length == 0).length == 0) {
-          this.$message({ type: 'success', message: '开启新一轮!' })
+        if (residue.length == 0) { // 全部抽完  - 开启新一轮
+          this.$message({ type: 'success', message: '开启新一大轮!' })
           this.rollingList.forEach(group => {
             group.sign = false;
             group.memberList.forEach(member => {
               member.sign = false;
             })
           })
+          this.saveRollListData();
         } else {
           this.rollingList.forEach(group => {
+            this.$message({ type: 'success', message: '开启新一小轮!' })
             if (group.memberList.filter(item => item.sign == false).length != 0) group.sign = false;
           })
         }
         this.saveRollListData();
-      } else {
-        let randomGroupIndex = this.getRndInteger(0, signGroup.length - 1);
+      } else { //小组轮询
+        let randomGroupIndex = this.getRndInteger(0, signGroup.length - 1); // 随机一个小组
         let realGroupIndex = null;
         this.rollingList.forEach((group, index) => {
           if (group.groupName == signGroup[randomGroupIndex].groupName) {
@@ -94,20 +94,17 @@ export default {
           }
         });
         let signMember = signGroup[randomGroupIndex].memberList.filter(item => item.sign == false);
-        console.log('过滤的signMember', signMember)
         if (signMember.length == 0) { // 成员抽完
           this.rollingList[realGroupIndex].memberList.forEach(item => {
             item.sign = false;
           })
           signMember = signGroup[randomGroupIndex].memberList.filter(item => item.sign == false);
         }
-        console.log('过滤的signMember', signMember)
         let randomMemberIndex = this.getRndInteger(0, signMember.length - 1);
         this.rollingList[realGroupIndex].memberList.forEach(item => {
-          // console.log('item', item)
-          // console.log('signMember', signMember)
-          if (item.name == signMember[randomMemberIndex].name) {
+          if (item.name == signMember[randomMemberIndex].name) { // 抽取成功
             item.sign = true;
+            this.saveHistory(this.rollingList[realGroupIndex], signMember[randomMemberIndex])
           }
         })
         this.saveRollListData();
@@ -116,22 +113,23 @@ export default {
     // 保存抽取历史
     saveHistory(group, member) {
       let time = new Date()
-
-      console.log(new Date(), '抽取的是', group, '组的', member);
-      // this.historyList.push('')
-      // this.$public.saveStorage('historyList', this.historyList)
+      let now = `${time.getFullYear()}年${time.getMonth() + 1}月${time.getDate()}日 ${time.getHours()}时${time.getMinutes()}分`
+      console.log(now, '抽取的是', group, '组的', member);
+      this.historyList.push(`${now}抽取的是：'${group.groupName}'组的'${member.name}'`)
+      this.$public.saveStorage('historyList', this.historyList)
     },
     // 获取本地文件
     async getFile(e) {
+      console.log('获取文件', e)
       await this.$public.getFile(e, 'new')
       this.rollingList = this.$public.getStorage('rollingList')
-      // console.log('this.rollingList', this.rollingList)
+      console.log('this.rollingList', this.rollingList)
     },
     // 获取本地图片
     getLogo(e) {
       let reader = new FileReader();
       let files = document.getElementById('imgID').files[0]
-      console.log(files)
+      console.log(files);
       reader.readAsDataURL(files);
       reader.onload = () => {
         console.log('file 转换 base64', reader.result)
