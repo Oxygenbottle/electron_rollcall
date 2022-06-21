@@ -1,5 +1,5 @@
 {
-  "name": "action",
+  "name": "rollname",
   "version": "0.1.0",
   "private": true,
   "main": "main.js",
@@ -15,7 +15,7 @@
   "build": {
     "productName": "点名",
     "appId": "com.o",
-    "copyright": "2022@sentangle",
+    "copyright": "2022@oxygenbottle",
     "directories": {
       "output": "output"
     }
